@@ -1,23 +1,23 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerMove : MonoBehaviour
 {
     private Rigidbody rb;
-    private Animator anim;
-    public float speed;
-    public float run;
-    public float rot;
-    public float mForce;
-    private float tspeed;
+    private float _speedWalk;
+    private float _speedRun;
+    private float _speedSteal;
+    private float _speedRotation;
 
-    void Start()
+    private float _currentSpeed;
+
+    public void InitMove(float speedWalk, float speedRun, float speedSteal, float speedRotation)
     {
-        anim = GetComponent<Animator>();
-        rb = GetComponent<Rigidbody>();
+        _speedWalk = speedWalk;
+        _speedRun = speedRun;
+        _speedSteal = speedSteal;
+        _speedRotation = speedRotation;
 
-        tspeed = speed;
+        rb = GetComponent<Rigidbody>();
     }
 
     private void FixedUpdate()
@@ -28,30 +28,16 @@ public class PlayerMove : MonoBehaviour
         // Передвижение
         Vector3 mov = new Vector3(h, 0, v);
 
-        if(mov.magnitude > Mathf.Abs(0.01f))
-        transform.rotation = Quaternion.Lerp(transform.rotation,Quaternion.LookRotation(mov), Time.fixedDeltaTime * rot);
+        if (mov.magnitude > Mathf.Abs(0.01f))
+            transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(mov), Time.fixedDeltaTime * _speedRotation);
 
         if (Input.GetKey(KeyCode.LeftShift))
-        {
-            speed = run;
-        }else
-        {
-            speed = tspeed;
-        }
+            _currentSpeed = _speedRun;
+        else if (Input.GetKey(KeyCode.LeftControl))
+            _currentSpeed = _speedSteal;
+        else
+            _currentSpeed = _speedWalk;
 
-        rb.velocity = Vector3.ClampMagnitude(mov, 1) * speed;
-
-        //rb.transform.Translate(Vector3.forward * Time.deltaTime * speed);
-
-        
+        rb.velocity = Vector3.ClampMagnitude(mov, 1) * _currentSpeed;
     }
-
-    //private void Update()
-    //{
-    //    if (Input.GetKeyDown(KeyCode.LeftShift))
-    //    {
-    //        rb.AddForce(Vector3.forward * JumpForce, ForceMode.Impulse);
-    //    }
-    //}
-
 }
