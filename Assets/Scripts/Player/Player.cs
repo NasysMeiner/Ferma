@@ -15,8 +15,6 @@ public class Player : MonoBehaviour
     [Inject]
     public void InitPlayer(PlayerMove playerMove)
     {
-        Rigidbody = GetComponent<Rigidbody>();
-
         _playerMove = playerMove;
     }
 
@@ -27,11 +25,22 @@ public class Player : MonoBehaviour
         SpeedSteal = speedSteal;
         SpeedRotation = speedRotation;
 
+        Rigidbody = GetComponent<Rigidbody>();
+
         _playerMove.InitMove(this);
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        
     }
 
     private void FixedUpdate()
     {
         _playerMove.Move();
+    }
+    private void Update()
+    {
+        _playerMove.Rotation();
     }
 }

@@ -11,6 +11,11 @@ public class PlayerMove
 
     private float _currentSpeed;
 
+    private float _horizontal => Input.GetAxis("Horizontal");
+    private float _vertical => Input.GetAxis("Vertical");
+
+    private Vector3 Direction => new Vector3(_horizontal, 0, _vertical);
+
     public void InitMove(Player player)
     {
         _player = player;
@@ -25,15 +30,6 @@ public class PlayerMove
 
     public void Move()
     {
-        float h = Input.GetAxis("Horizontal");
-        float v = Input.GetAxis("Vertical");
-
-        // Передвижение
-        Vector3 mov = new Vector3(h, 0, v);
-
-        if (mov.magnitude > Mathf.Abs(0.01f))
-            _player.Transform.rotation = Quaternion.Lerp(_player.Transform.rotation, Quaternion.LookRotation(mov), Time.fixedDeltaTime * _speedRotation);
-
         if (Input.GetKey(KeyCode.LeftShift))
             _currentSpeed = _speedRun;
         else if (Input.GetKey(KeyCode.LeftControl))
@@ -41,6 +37,15 @@ public class PlayerMove
         else
             _currentSpeed = _speedWalk;
 
+        Vector3 mov = Direction;
+        mov.y = _rb.velocity.y;
+
         _rb.velocity = Vector3.ClampMagnitude(mov, 1) * _currentSpeed;
+    }
+
+    public void Rotation()
+    {
+        if (Direction.magnitude > Mathf.Abs(0.01f))
+            _player.Transform.rotation = Quaternion.Lerp(_player.Transform.rotation, Quaternion.LookRotation(Direction), Time.fixedDeltaTime * _speedRotation);
     }
 }
