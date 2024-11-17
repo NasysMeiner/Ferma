@@ -1,8 +1,9 @@
 using UnityEngine;
 
-public class PlayerMove : MonoBehaviour
+public class PlayerMove
 {
-    private Rigidbody rb;
+    private Player _player;
+    private Rigidbody _rb;
     private float _speedWalk;
     private float _speedRun;
     private float _speedSteal;
@@ -10,17 +11,19 @@ public class PlayerMove : MonoBehaviour
 
     private float _currentSpeed;
 
-    public void InitMove(float speedWalk, float speedRun, float speedSteal, float speedRotation)
+    public void InitMove(Player player)
     {
-        _speedWalk = speedWalk;
-        _speedRun = speedRun;
-        _speedSteal = speedSteal;
-        _speedRotation = speedRotation;
+        _player = player;
 
-        rb = GetComponent<Rigidbody>();
+        _speedWalk = player.SpeedWalk;
+        _speedRun = player.SpeedRun;
+        _speedSteal = player.SpeedSteal;
+        _speedRotation = player.SpeedRotation;
+
+        _rb = player.Rigidbody;
     }
 
-    private void FixedUpdate()
+    public void Move()
     {
         float h = Input.GetAxis("Horizontal");
         float v = Input.GetAxis("Vertical");
@@ -29,7 +32,7 @@ public class PlayerMove : MonoBehaviour
         Vector3 mov = new Vector3(h, 0, v);
 
         if (mov.magnitude > Mathf.Abs(0.01f))
-            transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(mov), Time.fixedDeltaTime * _speedRotation);
+            _player.Transform.rotation = Quaternion.Lerp(_player.Transform.rotation, Quaternion.LookRotation(mov), Time.fixedDeltaTime * _speedRotation);
 
         if (Input.GetKey(KeyCode.LeftShift))
             _currentSpeed = _speedRun;
@@ -38,6 +41,6 @@ public class PlayerMove : MonoBehaviour
         else
             _currentSpeed = _speedWalk;
 
-        rb.velocity = Vector3.ClampMagnitude(mov, 1) * _currentSpeed;
+        _rb.velocity = Vector3.ClampMagnitude(mov, 1) * _currentSpeed;
     }
 }

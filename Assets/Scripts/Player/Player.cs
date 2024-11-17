@@ -1,18 +1,37 @@
 using UnityEngine;
+using Zenject;
 
 public class Player : MonoBehaviour
 {
-    [SerializeField] private float _speedWalk;
-    [SerializeField] private float _speedRun;
-    [SerializeField] private float _speedSteal;
-    [SerializeField] private float _speedRotation;
+    public float SpeedWalk { get; set; }
+    public float SpeedRun { get; set; }
+    public float SpeedSteal { get; set; }
+    public float SpeedRotation { get; set; }
+    public Rigidbody Rigidbody { get; set; }
+    public Transform Transform => transform;
 
     private PlayerMove _playerMove;
 
+    [Inject]
     public void InitPlayer(PlayerMove playerMove)
     {
-        _playerMove = playerMove;
+        Rigidbody = GetComponent<Rigidbody>();
 
-        _playerMove.InitMove(_speedWalk, _speedRun, _speedSteal, _speedRotation);
+        _playerMove = playerMove;
+    }
+
+    public void LoadPar(float speedWalk, float speedRun, float speedSteal, float speedRotation)
+    {
+        SpeedWalk = speedWalk;
+        SpeedRun = speedRun;
+        SpeedSteal = speedSteal;
+        SpeedRotation = speedRotation;
+
+        _playerMove.InitMove(this);
+    }
+
+    private void FixedUpdate()
+    {
+        _playerMove.Move();
     }
 }

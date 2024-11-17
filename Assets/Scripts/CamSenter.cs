@@ -1,6 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using Zenject;
 
 public class CamSenter : MonoBehaviour
 {
@@ -8,6 +7,12 @@ public class CamSenter : MonoBehaviour
     public float x;
     public float y;
     public float z;
+
+    [Inject]
+    public void InitCam(Player player)
+    {
+        pl = player.Transform;
+    }
 
     void FixedUpdate()
     {
