@@ -8,14 +8,17 @@ public class Player : MonoBehaviour
     public float SpeedSteal { get; set; }
     public float SpeedRotation { get; set; }
     public Rigidbody Rigidbody { get; set; }
+    public IInteractable CurrentInteractable { get; set; }
     public Transform Transform => transform;
 
     private PlayerMove _playerMove;
+    private PlayerInput _playerInput;
 
     [Inject]
     public void InitPlayer(PlayerMove playerMove)
     {
         _playerMove = playerMove;
+        _playerInput = new PlayerInput(this);
     }
 
     public void LoadPar(float speedWalk, float speedRun, float speedSteal, float speedRotation)
@@ -32,7 +35,14 @@ public class Player : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        
+        if(other.TryGetComponent(out IInteractable interactable))
+            CurrentInteractable = interactable;
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.TryGetComponent(out IInteractable interactable) && CurrentInteractable == interactable)
+            CurrentInteractable = null;
     }
 
     private void FixedUpdate()
@@ -42,5 +52,6 @@ public class Player : MonoBehaviour
     private void Update()
     {
         _playerMove.Rotation();
+        _playerInput.ProcessInput();
     }
 }
