@@ -15,10 +15,12 @@ public class Player : MonoBehaviour
     private PlayerInput _playerInput;
 
     [Inject]
-    public void InitPlayer(PlayerMove playerMove)
+    public void InitPlayer(PlayerMove playerMove, PlayerInput playerInput)
     {
         _playerMove = playerMove;
-        _playerInput = new PlayerInput(this);
+        _playerInput = playerInput;
+
+        _playerInput.InitPlayerInput(this);
     }
 
     public void LoadPar(float speedWalk, float speedRun, float speedSteal, float speedRotation)

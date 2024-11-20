@@ -10,6 +10,7 @@ public interface IInteractable
 
 public enum TypeInteraction
 {
+    NULL,
     Press,
     Clamp,
     Presses

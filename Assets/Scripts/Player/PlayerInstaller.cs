@@ -13,6 +13,7 @@ public class PlayerInstaller : MonoInstaller
     public override void InstallBindings()
     {
         Container.Bind<PlayerMove>().FromNew().AsSingle();
+        Container.Bind<PlayerInput>().FromNew().AsSingle();
 
         Player player = Container.InstantiatePrefabForComponent<Player>(_prefab, _spawnPoint.transform.position, Quaternion.identity, null);
         Container.BindInterfacesAndSelfTo<Player>().FromInstance(player).AsSingle();
