@@ -6,6 +6,7 @@ using Zenject;
 
 public class Player : MonoBehaviour
 {
+    public static Player instanse;
     public float SpeedWalk { get; set; }
     public float SpeedRun { get; set; }
     public float SpeedSteal { get; set; }
@@ -18,9 +19,10 @@ public class Player : MonoBehaviour
     private PlayerInput _playerInput;
 
     GameObject currentItem;
-    int currentItemNum;
+    public int currentItemNum;
     public GameObject itemSpawner; //Потом поменяй ГО на трансформ
-    public GameObject[] items;
+    public GameObject[] items; //Объекты, что будут спавниться
+    public event Action<int> HandNumChange;
 
     [Inject]
     public void InitPlayer(PlayerMove playerMove, PlayerInput playerInput)
@@ -55,6 +57,15 @@ public class Player : MonoBehaviour
             CurrentInteractable = null;
     }
 
+    private void Awake()
+    {
+        instanse = this;
+    }
+    private void Start()
+    {
+        Items(1);
+    }
+
     private void FixedUpdate()
     {
         _playerMove.Move();
@@ -76,14 +87,14 @@ public class Player : MonoBehaviour
         }
         catch (Exception e)
         {
-            Debug.Log(Input.inputString);
+            //Debug.Log(Input.inputString);
         }
         if(Input.GetAxis("Mouse ScrollWheel") != 0)
         {
             if(Input.GetAxis("Mouse ScrollWheel") > 0)
-                Items(currentItemNum + 1);
-            else 
                 Items(currentItemNum - 1);
+            else 
+                Items(currentItemNum + 1);
         }
     }
     void Items(int num)//Мешок семян, Бита, Культиватор, Ножницы, Серп, Лейка 
@@ -93,7 +104,15 @@ public class Player : MonoBehaviour
         else if (num < 1)
             num = 6;
         currentItemNum = num;
-
+        try
+        {
+            HandNumChange(num);
+        }catch(Exception a)
+        {
+            Debug.Log("Hyinia kakia-to");
+        }
+        
+      
         if (currentItem != null)
             Destroy(currentItem);
 
